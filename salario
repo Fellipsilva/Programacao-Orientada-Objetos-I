@@ -1,0 +1,78 @@
+import javax.swing.JOptionPane;
+import java.text.DecimalFormat;
+
+public class Salario {
+    public static void main(String[] args) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        float salario, ajuste = 0, salarioReajustado, salarioReal;
+        int percentualAjuste = 0;
+
+        while (true) {
+            String mensagem = "A seguir, você verá uma tabela sobre reajuste salarial:\n\n" +
+                    "→ Até R$280,00:             aumento de 20%\n" +
+                    "→ De R$280,01 a R$700,00:   aumento de 15%\n" +
+                    "→ De R$700,01 a R$1500,00:  aumento de 10%\n" +
+                    "→ Acima de R$1500,00:       aumento de 5%\n\n" +
+                    "Inflação do período: 3,8%\n";
+
+            JOptionPane.showMessageDialog(null, mensagem, "Tabela de Reajuste", JOptionPane.INFORMATION_MESSAGE);
+
+            String entrada = JOptionPane.showInputDialog(null, "Informe seu salário atual:", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+
+            if (entrada == null) {
+                JOptionPane.showMessageDialog(null, "Programa encerrado pelo usuário.", "Encerrado", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                salario = Float.parseFloat(entrada.replace(",", "."));
+
+                if (salario <= 0) {
+                    JOptionPane.showMessageDialog(null, "Erro: o salário deve ser maior que zero.", "Entrada Inválida", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                // Determina o percentual de ajuste
+                if (salario <= 280) {
+                    percentualAjuste = 20;
+                    ajuste = 0.20f;
+                } else if (salario <= 700) {
+                    percentualAjuste = 15;
+                    ajuste = 0.15f;
+                } else if (salario <= 1500) {
+                    percentualAjuste = 10;
+                    ajuste = 0.10f;
+                } else {
+                    percentualAjuste = 5;
+                    ajuste = 0.05f;
+                }
+
+                float valorAumento = salario * ajuste;
+                salarioReajustado = salario + valorAumento;
+                salarioReal = salarioReajustado - (salarioReajustado * 0.038f); // desconta inflação
+
+                String resultado = "Resumo do reajuste salarial:\n\n" +
+                        "→ Salário original: R$ " + df.format(salario) + "\n" +
+                        "→ Percentual de ajuste: " + percentualAjuste + "%\n" +
+                        "→ Valor do aumento: R$ " + df.format(valorAumento) + "\n" +
+                        "→ Novo salário com reajuste: R$ " + df.format(salarioReajustado) + "\n" +
+                        "→ Salário ajustado pela inflação: R$ " + df.format(salarioReal);
+
+                JOptionPane.showMessageDialog(null, resultado, "Resultado Completo", JOptionPane.INFORMATION_MESSAGE);
+
+                // 👉 Nova janela adicional com salário final
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Seu novo salário com o reajuste é: R$ " + df.format(salarioReajustado),
+                        "Salário Final",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+                break;
+
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Erro: por favor, insira um número válido (ex: 1500 ou 1500,00).", "Entrada Inválida", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+}
